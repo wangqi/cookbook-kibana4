@@ -2,8 +2,8 @@
 # Cookbook Name:: chamber-kibana
 # Recipe:: default
 #
-include_recipe 'chamber-kibana::_preconditions'
-include_recipe 'chamber-kibana::dependencies'
+include_recipe 'kibana4::_preconditions'
+include_recipe 'kibana4::dependencies'
 include_recipe 'ark'
 
 # Create user and group
