@@ -63,3 +63,40 @@ default['kibana']['shard_timeout'] = '30000'
 # Set to false to have a complete disregard for the validity of the SSL
 # certificate.
 default['kibana']['verify_ssl'] = true
+
+# === Nginx configurations
+#
+#<> The port on which to bind nginx.
+default['kibana']['nginx']['listen_http']  = 80
+#<> The HTTPS port on which to bind nginx.
+default['kibana']['nginx']['listen_https'] = 443
+
+default['kibana']['nginx']['client_max_body'] = '50M'
+
+#<> Boolean switch to enable SSL configuration.
+default['kibana']['nginx']['ssl'] = false
+#<> Boolean switch to enable nginx search query proxy
+default['kibana']['nginx']['proxy'] = false
+#<> Boolean switch to enable auth basic
+default['kibana']['nginx']['auth'] = false
+
+#<> The path to auth basic file
+default['kibana']['auth_file'] = '/etc/nginx/htpasswd.users'
+
+#<> The path to the SSL certificate file.
+default['kibana']['nginx']['ssl_certificate']     = nil
+#<> The path to the SSL certificate key.
+default['kibana']['nginx']['ssl_certificate_key'] = nil
+
+# nginx ssl boilerplate
+#<> The SSL protocols.
+default['kibana']['nginx']['ssl_protocols']       = 'TLSv1 TLSv1.1 TLSv1.2'
+#<> The SSL ciphers.
+default['kibana']['nginx']['ssl_ciphers']         = 'ECDHE-RSA-RC4-SHA:ECDHE-RSA-AES128-SHA:AES256-CGM-SHA256:ECDHE-RSA-AES256-SHA256:RC4:HIGH:!aNULL:!MD5:-LOW:-SSLv2:-EXP'
+#<> The SSL session cache.
+default['kibana']['nginx']['ssl_session_cache']   = 'shared:SSL:10m'
+#<> The SSL session timeout.
+default['kibana']['nginx']['ssl_session_timeout'] = '10m'
+
+#<> The virtualhost server name.
+default['kibana']['nginx']['server_name'] = 'kibana'
