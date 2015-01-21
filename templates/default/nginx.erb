@@ -27,43 +27,45 @@ server {
 
 
   location / {
-    root <%= @root %>;
+    #root <%= @root %>;
     proxy_pass http://localhost:5601;
     <% if @auth %>
     auth_basic "Kibana Auth";
     auth_basic_user_file <%= @auth_file %>;
     <% end %>
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
   }
 
-  <% if @proxy %>
-  location ~ ^/_aliases$ {
-    proxy_pass http://<%= @proxy_host %>:<%= @proxy_port %>;
+  location ~ ^/elasticsearch/.*$ {
+    proxy_pass http://elb.elasticsearch.qiku.mobi:9200;
     proxy_read_timeout 90;
   }
-  location ~ ^/.*/_aliases$ {
-    proxy_pass http://<%= @proxy_host %>:<%= @proxy_port %>;
-    proxy_read_timeout 90;
-  }
-  location ~ ^/_nodes$ {
-    proxy_pass http://<%= @proxy_host %>:<%= @proxy_port %>;
-    proxy_read_timeout 90;
-  }
-  location ~ ^/.*/_search$ {
-    proxy_pass http://<%= @proxy_host %>:<%= @proxy_port %>;
-    proxy_read_timeout 90;
-  }
-  location ~ ^/.*/_mapping {
-    proxy_pass http://<%= @proxy_host %>:<%= @proxy_port %>;
-    proxy_read_timeout 90;
+}
+
+server {
+  listen       <% if @ssl %><%= @listen_https %><% else %><%= @listen_http %><% end %>;
+  server_name  <%= @elb_server_name %>;
+
+  client_max_body_size <%= @client_max_body %>;
+
+  error_log   <%= @log_dir %>/<%= @elb_server_name %>-errors.log;
+  access_log  <%= @log_dir %>/<%= @elb_server_name %>.log;
+
+  location / {
+    proxy_pass <%= @elb_proxy %>;
+    proxy_redirect off;
+    proxy_http_version 1.1;
+    proxy_set_header Connection "";
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_pass_header Access-Control-Allow-Origin;
+    proxy_pass_header Access-Control-Allow-Methods;
+    proxy_hide_header Access-Control-Allow-Headers;
+    add_header Access-Control-Allow-Headers 'X-Requested-With, Content-Type';
+    add_header Access-Control-Allow-Credentials true;
   }
 
-  location ~ ^/kibana-int/dashboard/.*$ {
-    proxy_pass http://<%= @proxy_host %>:<%= @proxy_port %>;
-    proxy_read_timeout 90;
-  }
-  location ~ ^/kibana-int/temp.*$ {
-    proxy_pass http://<%= @proxy_host %>:<%= @proxy_port %>;
-    proxy_read_timeout 90;
-  }
-  <% end %>
 }

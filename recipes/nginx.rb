@@ -8,7 +8,7 @@ template File.join(node['nginx']['dir'], 'sites-available', 'kibana') do
   mode '0644'
   variables(
     #'root'                => File.join(node['kibana']['dir'], 'current'),
-    'root'                => '/var/www',
+    #'root'                => '/var/www',
     'log_dir'             => node['nginx']['log_dir'],
     'listen_http'         => node['kibana']['nginx']['listen_http'],
     'listen_https'        => node['kibana']['nginx']['listen_https'],

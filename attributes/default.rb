@@ -100,3 +100,5 @@ default['kibana']['nginx']['ssl_session_timeout'] = '10m'
 
 #<> The virtualhost server name.
 default['kibana']['nginx']['server_name'] = 'kibana'
+default['kibana']['nginx']['elb_server_name'] = 'kibana.elb'
+default['kibana']['nginx']['elb_proxy'] = 'http://elb.elasticsearch.qiku.mobi:9200'
